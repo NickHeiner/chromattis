@@ -1,4 +1,5 @@
 import { shuffle_colors } from './actions';
+import type { ApplicationState, Tile as TileType, Level as LevelType, Achievement } from './types';
 
 
 const track1 = `${import.meta.env.BASE_URL}audio/song17.flac`;
@@ -48,8 +49,8 @@ const device_is_pwa = window.matchMedia('(display-mode: standalone)').matches ? 
 let persisted_state = device_is_pwa ? localStorage.getItem('gamestate_pwa') : localStorage.getItem('gamestate_browser');
 
 
-const Tile = (id, target_tiles, current_color, will_change, preview) => ({id: id, target_tiles: target_tiles, current_color: current_color, will_change: will_change, preview: preview});
-const Level = (board, id) => ({
+const createTile = (id: number, target_tiles: number[], current_color = 0, will_change = false, preview = false): TileType => ({id, target_tiles, current_color, will_change, preview});
+const createLevel = (board: TileType[], id: string): LevelType => ({
   board: board,
   id: id,
   moves: 0,
@@ -60,7 +61,7 @@ const Level = (board, id) => ({
 });
 
 // True random
-const RandomLevel = () => {
+const RandomLevel = (): LevelType => {
   const size = 6;
   const tiles = [];
   for (let i = 0; i < size; i++) {
@@ -69,12 +70,12 @@ const RandomLevel = () => {
     for (let j = 0; j < number_of_change_tiles; j++) {
       will_change_tiles.push(Math.floor(Math.random() * size));
     }
-    tiles.push(Tile(i, will_change_tiles));
+    tiles.push(createTile(i, will_change_tiles));
   }
-  return Level(tiles, '9a3c75b1-23423-83dc-ca53a6220071');
+  return createLevel(tiles, '9a3c75b1-23423-83dc-ca53a6220071');
 }
 
-const RegulatedRandomLevel = () => {
+const RegulatedRandomLevel = (): LevelType => {
   const size = 12;
   const tiles = [];
   for (let i = 0; i < size; i++) {
@@ -86,9 +87,9 @@ const RegulatedRandomLevel = () => {
         will_change_tiles.push(randomly_selected);
       }
     }
-    tiles.push(Tile(i, will_change_tiles));
+    tiles.push(createTile(i, will_change_tiles));
   }
-  return Level(tiles, '9a3c75b1-23423-83dc-ca53a6220071');
+  return createLevel(tiles, '9a3c75b1-23423-83dc-ca53a6220071');
 }
 
 const completed_achievements = function() {
@@ -113,62 +114,62 @@ const default_content =
   completed_achievements: completed_achievements,
   game: {
     levels: [
-      Level([
-        Tile(0, [0]), Tile(1, [1])
+      createLevel([
+        createTile(0, [0]), createTile(1, [1])
       ], '9a3c75b1-4d4176-83dc-ca53a6220071'),
-      Level([
-        Tile(0, [1]), Tile(1, [0, 1]),
+      createLevel([
+        createTile(0, [1]), createTile(1, [0, 1]),
       ], 'd5b2cd45-4ff7-4a8b-bf1d-82a64a0d5ea0'),
-      Level([
-        Tile(0, [0, 1]), Tile(1, [0, 2]), Tile(2, [2, 1]),
+      createLevel([
+        createTile(0, [0, 1]), createTile(1, [0, 2]), createTile(2, [2, 1]),
       ], '1a49af532c-4bbd-bfb0-a6ab2094c3c1'),
-      Level([
-        Tile(0, [1, 2]), Tile(1, [0, 2]), Tile(2, [0, 1]),
+      createLevel([
+        createTile(0, [1, 2]), createTile(1, [0, 2]), createTile(2, [0, 1]),
       ], 'afedc58f-574fbd-a06c-1010fcfdd6e6'),
-      Level([
-        Tile(0, [0, 1]), Tile(1, [1, 2]),
-        Tile(2, [2, 0]), Tile(3, [3, 2]),
+      createLevel([
+        createTile(0, [0, 1]), createTile(1, [1, 2]),
+        createTile(2, [2, 0]), createTile(3, [3, 2]),
       ], '0024214a8e-427c-99bb-b0222f1ec099'),
-      Level([
-        Tile(0, [1, 2, 3]), Tile(1, [0, 1, 2]),
-        Tile(2, [2, 3, 0]), Tile(3, [3, 0, 1]),
+      createLevel([
+        createTile(0, [1, 2, 3]), createTile(1, [0, 1, 2]),
+        createTile(2, [2, 3, 0]), createTile(3, [3, 0, 1]),
       ], '61dce9b6-93496a-9af3-e942c297e8c6'),
-      Level([
-        Tile(0, [0, 1, 3, 4]), Tile(1, [3, 1, 5]), Tile(2, [1, 2, 5]),
-        Tile(3, [0, 3, 4]), Tile(4, [0, 2, 4]), Tile(5, [1, 2, 4, 5]),
+      createLevel([
+        createTile(0, [0, 1, 3, 4]), createTile(1, [3, 1, 5]), createTile(2, [1, 2, 5]),
+        createTile(3, [0, 3, 4]), createTile(4, [0, 2, 4]), createTile(5, [1, 2, 4, 5]),
       ], 'a3109dd9-b15d-4d80eb-dc6c6f485e76'),
-      Level([
-        Tile(0, [0, 1, 2]), Tile(1, [1, 3, 4, 5]), Tile(2, [2, 4, 5]),
-        Tile(3, [1, 3]), Tile(4, [0, 2, 4]), Tile(5, [1, 2, 4, 5]),
+      createLevel([
+        createTile(0, [0, 1, 2]), createTile(1, [1, 3, 4, 5]), createTile(2, [2, 4, 5]),
+        createTile(3, [1, 3]), createTile(4, [0, 2, 4]), createTile(5, [1, 2, 4, 5]),
       ], '50c1e6c9eb-431c-a8ca-e8e4b6b885d4'),
-      Level([
-        Tile(0, [0, 1, 3, 4]), Tile(1, [1, 5]), Tile(2, [1, 2, 4, 5]),
-        Tile(3, [3, 1]), Tile(4, [4, 5]), Tile(5, [5, 7]),
-        Tile(6, [3, 4, 6, 7]), Tile(7, [3, 7]), Tile(8, [4, 5, 7, 8]),
+      createLevel([
+        createTile(0, [0, 1, 3, 4]), createTile(1, [1, 5]), createTile(2, [1, 2, 4, 5]),
+        createTile(3, [3, 1]), createTile(4, [4, 5]), createTile(5, [5, 7]),
+        createTile(6, [3, 4, 6, 7]), createTile(7, [3, 7]), createTile(8, [4, 5, 7, 8]),
       ], 'd14b238923-4efa-8d13-6635965ab5b3'),
-      Level([
-        Tile(0, [0, 1, 3]), Tile(1, [1, 3, 5]), Tile(2, [1, 2, 5]),
-        Tile(3, [1, 3, 7]), Tile(4, [1, 3, 5, 7]), Tile(5, [2, 4, 4, 5, 8]),
-        Tile(6, [3, 6, 7]), Tile(7, [6, 7, 8, 4]), Tile(8, [5, 7, 8]),
+      createLevel([
+        createTile(0, [0, 1, 3]), createTile(1, [1, 3, 5]), createTile(2, [1, 2, 5]),
+        createTile(3, [1, 3, 7]), createTile(4, [1, 3, 5, 7]), createTile(5, [2, 4, 4, 5, 8]),
+        createTile(6, [3, 6, 7]), createTile(7, [6, 7, 8, 4]), createTile(8, [5, 7, 8]),
       ], 'c0b74e6e-4f48b2-a971-65993bfcacd2'),
-      Level([
-        Tile(0, [0, 1, 4, 5]), Tile(1, [1, 2]), Tile(2, [1, 2]), Tile(3, [2, 3, 6, 7]),
-        Tile(4, [4, 8]), Tile(5, [5, 6, 9, 10]), Tile(6, [5, 6, 9, 10]), Tile(7, [7, 11]),
-        Tile(8, [4, 8]), Tile(9, [5, 6, 9, 10]), Tile(10, [5, 6, 9, 10]), Tile(11, [7, 11]),
-        Tile(12, [8, 9, 12, 13]), Tile(13, [13, 14]), Tile(14, [13, 14]), Tile(15, [10, 11, 14, 15]),
+      createLevel([
+        createTile(0, [0, 1, 4, 5]), createTile(1, [1, 2]), createTile(2, [1, 2]), createTile(3, [2, 3, 6, 7]),
+        createTile(4, [4, 8]), createTile(5, [5, 6, 9, 10]), createTile(6, [5, 6, 9, 10]), createTile(7, [7, 11]),
+        createTile(8, [4, 8]), createTile(9, [5, 6, 9, 10]), createTile(10, [5, 6, 9, 10]), createTile(11, [7, 11]),
+        createTile(12, [8, 9, 12, 13]), createTile(13, [13, 14]), createTile(14, [13, 14]), createTile(15, [10, 11, 14, 15]),
       ], '4d68914f-f84bc1-a921-f69702075562'),
-      Level([
-        Tile(0, [0, 1, 2, 3]), Tile(1, [1, 4]), Tile(2, [2, 5, 8]), Tile(3, [3, 6, 9, 12]),
-        Tile(4, [4, 5, 6, 7]), Tile(5, [5, 2, 8]), Tile(6, [6, 3, 9, 12]), Tile(7, [7, 10, 13]),
-        Tile(8, [8, 9, 10, 11]), Tile(9, [9, 3, 6, 12]), Tile(10, [10, 7, 13]), Tile(11, [11, 14]),
-        Tile(12, [12, 13, 14, 15]), Tile(13, [13, 9, 5, 1]), Tile(14, [14, 10, 6, 2]), Tile(15, [15, 11, 7, 3]),
+      createLevel([
+        createTile(0, [0, 1, 2, 3]), createTile(1, [1, 4]), createTile(2, [2, 5, 8]), createTile(3, [3, 6, 9, 12]),
+        createTile(4, [4, 5, 6, 7]), createTile(5, [5, 2, 8]), createTile(6, [6, 3, 9, 12]), createTile(7, [7, 10, 13]),
+        createTile(8, [8, 9, 10, 11]), createTile(9, [9, 3, 6, 12]), createTile(10, [10, 7, 13]), createTile(11, [11, 14]),
+        createTile(12, [12, 13, 14, 15]), createTile(13, [13, 9, 5, 1]), createTile(14, [14, 10, 6, 2]), createTile(15, [15, 11, 7, 3]),
       ], 'a524afce-86b3-48be23-af502cb80829'),
-      Level([
-        Tile(0, [0,1,2, 5,6, 10]), Tile(1, [1,7,13,19]), Tile(2, [1,2,3, 7,]), Tile(3, [3,7,11,15]), Tile(4, [4,3,2, 9,8, 14]),
-        Tile(5, [5,11,17,23]), Tile(6, [0,1,2, 5,6,7, 10,11,12]), Tile(7, [2,6,7,8,10, 11,13,14, 16,17,18,22]), Tile(8, [4,3,2, 9,8,7, 14,13,12]), Tile(9, [9,13,17,21]),
-        Tile(10, [5,10,15, 11]), Tile(11, [2,6,7,8,10, 11,13,14, 16,17,18,22]), Tile(12, [0,4,6,8, 12, 16,18,20,24]), Tile(13, [2,6,7,8,10, 11,13,14, 16,17,18,22]), Tile(14, [9,14,19, 13,]),
-        Tile(15, [3,7,11,15]), Tile(16, [20,21,22, 15,16,17, 10,11,12]), Tile(17, [2,6,7,8,10, 11,13,14, 16,17,18,22]), Tile(18, [24,23,22, 19,18,17, 14,13,12]), Tile(19, [1,7,13,19]),
-        Tile(20, [20,21,22, 15,16, 10,]), Tile(21, [9,13,17,21]), Tile(22, [21,22,23, 17]), Tile(23, [5,11,17,23]), Tile(24, [24,23,22, 19,18, 14]),
+      createLevel([
+        createTile(0, [0,1,2, 5,6, 10]), createTile(1, [1,7,13,19]), createTile(2, [1,2,3, 7,]), createTile(3, [3,7,11,15]), createTile(4, [4,3,2, 9,8, 14]),
+        createTile(5, [5,11,17,23]), createTile(6, [0,1,2, 5,6,7, 10,11,12]), createTile(7, [2,6,7,8,10, 11,13,14, 16,17,18,22]), createTile(8, [4,3,2, 9,8,7, 14,13,12]), createTile(9, [9,13,17,21]),
+        createTile(10, [5,10,15, 11]), createTile(11, [2,6,7,8,10, 11,13,14, 16,17,18,22]), createTile(12, [0,4,6,8, 12, 16,18,20,24]), createTile(13, [2,6,7,8,10, 11,13,14, 16,17,18,22]), createTile(14, [9,14,19, 13,]),
+        createTile(15, [3,7,11,15]), createTile(16, [20,21,22, 15,16,17, 10,11,12]), createTile(17, [2,6,7,8,10, 11,13,14, 16,17,18,22]), createTile(18, [24,23,22, 19,18,17, 14,13,12]), createTile(19, [1,7,13,19]),
+        createTile(20, [20,21,22, 15,16, 10,]), createTile(21, [9,13,17,21]), createTile(22, [21,22,23, 17]), createTile(23, [5,11,17,23]), createTile(24, [24,23,22, 19,18, 14]),
       ], 'b16b2728-ec5e-4391-a371-147d2138f52e'),
       RegulatedRandomLevel(),
     ],
@@ -359,4 +360,4 @@ if (persisted_state && persisted_state.game.levels.length !== default_content.ga
 }
 
 // If there is no persisted_state in localStorage, initialize a new state with shuffled colors.
-export const INITIAL_STATE = persisted_state ? persisted_state : shuffle_colors(default_content, persisted_state);
+export const INITIAL_STATE: ApplicationState = persisted_state ? persisted_state as ApplicationState : shuffle_colors(default_content as ApplicationState, persisted_state);

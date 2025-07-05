@@ -3,13 +3,17 @@ import { DownClickSound } from './initial_state';
 import { UpClickSound } from './initial_state';
 import { UpDownClickSound } from './initial_state';
 import { sync_pulse_animations } from './actions';
+import type { ApplicationState, Tile } from './types';
 
-let touchStartTarget = null;
-let cancelPress = null;
-let clickStartTarget = null;
-let enterKeyCurrentlyPressed = null;
+let touchStartTarget: EventTarget | null = null;
+let cancelPress: boolean | null = null;
+let clickStartTarget: EventTarget | null = null;
+let enterKeyCurrentlyPressed: boolean | null = null;
 
-const processAchievemeNotifications = (achievements, new_achievements) => {
+const processAchievemeNotifications = (
+  achievements: { text: string }[],
+  new_achievements: { text: string }[]
+) => {
   if (achievements.length !== new_achievements.length) {
     store.dispatch({ type: 'UPDATE_ACHIEVEMENT_TEXT', text: new_achievements.filter(element => !achievements.includes(element))[0].text });
     document.getElementById('AchievementNotification').classList.add('show');
@@ -35,7 +39,7 @@ export const backspaceKeyPressed = () => {
   store.dispatch({ type: 'HIGHLIGHT_TILES', tile: selected_tile });
 }
 
-export const backspaceKeyReleased = event => {
+export const backspaceKeyReleased = () => {
   const application = store.getState();
   const current_level = application.game.current_level();
   const achievements = application.completed_achievements();
@@ -82,7 +86,7 @@ export const enterKeyReleased = () => {
   if (current_level.in_winning_state()) store.dispatch({ type: 'CLEAR_HIGHLIGHTS' });
 }
 
-export const upArrowKeyPressed = event => {
+export const upArrowKeyPressed = (event?: KeyboardEvent) => {
   if (enterKeyCurrentlyPressed) {
     escapeKeyPressed(event);
     return;
@@ -98,7 +102,7 @@ export const upArrowKeyPressed = event => {
   sync_pulse_animations();
 }
 
-export const downArrowKeyPressed = event => {
+export const downArrowKeyPressed = (event?: KeyboardEvent) => {
   if (enterKeyCurrentlyPressed) {
     escapeKeyPressed(event);
     return;
@@ -114,7 +118,7 @@ export const downArrowKeyPressed = event => {
   sync_pulse_animations();
 }
 
-export const rightArrowKeyPressed = event => {
+export const rightArrowKeyPressed = (event?: KeyboardEvent) => {
   if (enterKeyCurrentlyPressed) {
     escapeKeyPressed(event);
     return;
@@ -133,7 +137,7 @@ export const rightArrowKeyPressed = event => {
   sync_pulse_animations();
 }
 
-export const leftArrowKeyPressed = event => {
+export const leftArrowKeyPressed = (event?: KeyboardEvent) => {
   if (enterKeyCurrentlyPressed) {
     escapeKeyPressed(event);
     return;
@@ -170,7 +174,7 @@ export const cliPrintBoard = () => {
   console.log(row);
 }
 
-export const cliClick = (tile, reverse) => () => {
+export const cliClick = (tile: Tile, reverse?: boolean) => () => {
   const application = store.getState();
   const current_level = application.game.current_level();
   if (!current_level.in_winning_state()) {
@@ -184,7 +188,7 @@ export const cliClick = (tile, reverse) => () => {
   }
 }
 
-export const cliPreview = (tile) => () => {
+export const cliPreview = (tile: Tile) => () => {
   if (!store.getState().game.current_level().in_winning_state()) {
     store.dispatch({ type: 'SELECT_TILE', tile_id: tile ? tile.id : null });
     console.log(`If you press Tile ${tile.id} the following Tiles will change:`);
@@ -194,7 +198,7 @@ export const cliPreview = (tile) => () => {
   }
 }
 
-export const tileTouchStart = tile => event => {
+export const tileTouchStart = (tile: Tile) => (event: TouchEvent) => {
   const application = store.getState();
   if (!application.mute_audio) DownClickSound.play();
   touchStartTarget = event.target
@@ -202,7 +206,7 @@ export const tileTouchStart = tile => event => {
   store.dispatch({ type: 'SELECT_TILE', tile_id: tile.id });
 }
 
-export const tileTouchEnd = tile => event => {
+export const tileTouchEnd = (tile: Tile) => (event: TouchEvent) => {
   const application = store.getState();
   const achievements = application.completed_achievements();
   const touch = event.changedTouches[0];
@@ -230,7 +234,7 @@ export const tileTouchEnd = tile => event => {
   processAchievemeNotifications(achievements, new_achievements);
 }
 
-export const tileUpClicked = (clicked_tile) => event => {
+export const tileUpClicked = (clicked_tile: Tile) => (event: MouseEvent) => {
   let clickEndTarget = event.target;
   const application = store.getState();
   const achievements = application.completed_achievements();
@@ -260,7 +264,7 @@ export const tileUpClicked = (clicked_tile) => event => {
   processAchievemeNotifications(achievements, new_achievements);
 }
 
-export const tileDownClicked = (clicked_tile) => event => {
+export const tileDownClicked = (clicked_tile: Tile) => (event: MouseEvent | TouchEvent) => {
   clickStartTarget = event.target;
   const application = store.getState();
   if (!application.touch_action) {
@@ -269,7 +273,7 @@ export const tileDownClicked = (clicked_tile) => event => {
   }
 }
 
-export const tileHovered = hovered_tile => () => {
+export const tileHovered = (hovered_tile: Tile) => () => {
   if (!store.getState().touch_action) {
     store.dispatch({ type: 'PREVIEW_TILES', tile: hovered_tile });
   }
@@ -286,14 +290,14 @@ export const muteMusicButtonClicked = () => {
   processAchievemeNotifications(achievements, new_achievements);
 }
 
-export const tileUnhovered = hovered_tile => () => {
+export const tileUnhovered = () => () => {
   if (!store.getState().touch_action) {
     store.dispatch({ type: 'CLEAR_HIGHLIGHTS' });
   }
   sync_pulse_animations();
 }
 
-export const tileLongPressed = () => () => cancelPress = true;
+export const tileLongPressed = () => () => { cancelPress = true; };
 export const undoButtonClicked = () => store.dispatch({ type: 'UNDO_MOVE' });
 export const nextTutorialButtonClicked = () => store.dispatch({ type: 'NEXT_TUTORIAL' });
 export const previousTutorialButtonClicked = () => store.dispatch({ type: 'PREVIOUS_TUTORIAL' });
@@ -318,7 +322,7 @@ export const newGameButtonClicked = () => {
   sync_pulse_animations();
 }
 
-export const navigateLevelButtonClicked = level_index => () => {
+export const navigateLevelButtonClicked = (level_index: number) => () => {
   const game = store.getState().game;
   if (level_index <= game.highest_unlocked_level()) {
     store.dispatch({ type: 'NAVIGATE_LEVEL', level: level_index });

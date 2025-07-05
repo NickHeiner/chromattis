@@ -8,6 +8,7 @@ import { Tutorial } from './Tutorial';
 import { LevelNavBar } from './LevelNavBar';
 import { LevelNavMenu } from './LevelNavMenu';
 import { DownClickSound, VictorySound, all_tracks } from '../initial_state';
+import type { ApplicationState } from '../types';
 import { 
   newGameButtonClicked, undoButtonClicked, tutorialButtonClicked, 
   muteSoundButtonClicked, muteMusicButtonClicked, hideNumbersButtonClicked, 
@@ -44,7 +45,7 @@ GameMusic.addEventListener('ended', () => {
 });
 
 
-export const App = ({state}) => {
+export const App = ({state}: { state: ApplicationState }) => {
   // Add event listeners for custom install button/prompt
   // Logic should show button conditionally on support for PWA installation
   // Will only run on first render because of empty array passed as second param

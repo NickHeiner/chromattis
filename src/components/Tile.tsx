@@ -1,5 +1,6 @@
 import '../styles/Tile.css';
 import { tileUpClicked, tileDownClicked, tileHovered, tileUnhovered, cliClick, cliPreview, tileTouchStart, tileTouchEnd, tileLongPressed } from '../events';
+import type { Tile as TileType } from '../types';
 
 const color_map = {
   0: {hex: '#B71234', string: 'Red'},
@@ -10,7 +11,16 @@ const color_map = {
   5: {hex: '#FFFFFF', string: 'White'},
 };
 
-export const Tile = ({tile, index, currently_selected, preview_mode, game_in_progress, hide_numbers, hide_colors, hide_tooltips}) => 
+export const Tile = ({tile, index, currently_selected, preview_mode, game_in_progress, hide_numbers, hide_colors, hide_tooltips}: {
+  tile: TileType;
+  index: number;
+  currently_selected: boolean;
+  preview_mode: boolean;
+  game_in_progress: boolean;
+  hide_numbers: boolean;
+  hide_colors: boolean;
+  hide_tooltips: boolean;
+}) =>
   <div className='Tile'
        onMouseDown={tileDownClicked(tile)}
        onMouseEnter={tileHovered(tile)}

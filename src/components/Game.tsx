@@ -1,7 +1,16 @@
 import { Tile } from './Tile';
+import type { Level, Tile as TileType } from '../types';
 import '../styles/Game.css';
 
-export const Game = ({tiles, current_level, game_in_progress, show_game,  hide_numbers, hide_colors, hide_tooltips}) => {
+export const Game = ({tiles, current_level, game_in_progress, show_game,  hide_numbers, hide_colors, hide_tooltips}: {
+  tiles: TileType[];
+  current_level: Level;
+  game_in_progress: boolean;
+  show_game: boolean;
+  hide_numbers: boolean;
+  hide_colors: boolean;
+  hide_tooltips: boolean;
+}) => {
   tiles = tiles.map((tile, index) => 
     <Tile 
       index={index}

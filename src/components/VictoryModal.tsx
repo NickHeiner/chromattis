@@ -1,8 +1,18 @@
 import '../styles/VictoryModal.css';
 import { newGameButtonClicked, navigateLevelButtonClicked } from '../events';
 import { VictorySound } from '../initial_state';
+import type { Level } from '../types';
 
-export const VictoryModal = ({show_victory, game_in_progress, current_moves, current_level_index, best_score, total_levels, last_action, mute_audio}) => {
+export const VictoryModal = ({show_victory, game_in_progress, current_moves, current_level_index, best_score, total_levels, last_action, mute_audio}: {
+  show_victory: boolean;
+  game_in_progress: boolean;
+  current_moves: number;
+  current_level_index: number;
+  best_score: number | 'N/A';
+  total_levels: number;
+  last_action: string | null;
+  mute_audio: boolean;
+}) => {
   return(
     <div className={`VictoryModal primary-content-container bounce-container ${show_victory ? 'show' : 'hide'} ${last_action === 'clicktile' ? 'fade-in' : 'instant'}`}>
       <h2 className='bounce' style={{visibility: current_moves <= best_score ? null : 'hidden'}}>

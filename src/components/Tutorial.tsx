@@ -1,7 +1,8 @@
 import '../styles/Tutorial.css';
 import { tutorialButtonClicked, previousTutorialButtonClicked, nextTutorialButtonClicked } from '../events';
+import type { Tutorial as TutorialType } from '../types';
 
-export const Tutorial = ({show_tutorial, tutorial}) => {
+export const Tutorial = ({show_tutorial, tutorial}: { show_tutorial: boolean; tutorial: TutorialType }) => {
   const lesson = tutorial.levels[tutorial.current_level_index];
   return(
     <div className={`Tutorial primary-content-container ${show_tutorial ? 'show' : 'hide'}`}>

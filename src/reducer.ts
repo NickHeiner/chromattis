@@ -1,4 +1,6 @@
 import { INITIAL_STATE } from './initial_state';
+import type { ApplicationState } from './types';
+import type { AnyAction } from 'redux';
 import { 
   advance_tile_color, previous_tile_color, preview_tiles, highlight_tiles, 
   clear_highlights, shuffle_colors, navigate_level, undo_move, 
@@ -9,7 +11,7 @@ import {
   update_achievement_text, set_touch_flag
  } from './actions';
 
-export const reducer = (state = INITIAL_STATE, action) => {
+export const reducer = (state: ApplicationState = INITIAL_STATE, action: AnyAction): ApplicationState => {
   switch (action.type) {
     case 'ADVANCE_TILE_COLOR':
       return advance_tile_color(state, action.tile);
