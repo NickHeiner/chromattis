@@ -16,6 +16,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run lint && npm run typecheck",
     "preview": "vite preview"
   },
   "homepage": "https://CaptainStack.github.io/chromattis",
