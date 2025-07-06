@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './components/App';
 import { legacy_createStore as createStore } from 'redux';
+import type { Store } from 'redux';
 import reducer from './reducer';
+import type { ApplicationState } from './types';
 
-export const store = createStore(reducer);
+export const store: Store<ApplicationState> = createStore(reducer);
 const application = store.getState();
-const root = createRoot(document.getElementById('root'));
+const container = document.getElementById('root') as HTMLElement;
+const root = createRoot(container);
 const render = () => root.render(<StrictMode><App state={application}/></StrictMode>);
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,7 +1,8 @@
 import { achievementsButtonClicked } from '../events';
 import '../styles/Achievements.css';
+import type { Achievement, ApplicationState } from '../types';
 
-export const Achievements = ({state, achievements}) => {
+export const Achievements = ({state, achievements}: { state: ApplicationState; achievements: Achievement[] }) => {
   const num_completed_achievements = achievements.filter(achievement => achievement.condition(state) === true).length;
   const num_total_achievements = achievements.length;
   const percent_complete = Math.floor(num_completed_achievements / num_total_achievements * 100);

@@ -2,13 +2,14 @@ import { cliPrintBoard } from './events';
 import { GameMusic } from './components/App';
 import { DownClickSound } from './initial_state';
 import { num_displayed_levels } from './components/LevelNavMenu';
+import type { ApplicationState, Tile as TileType } from './types';
 
-export const set_touch_flag = (state, value) => {
+export const set_touch_flag = (state: ApplicationState, value: boolean): ApplicationState => {
   state.touch_action = value;
   return state;
 }
 
-export const select_tile = (state, tile_id) => {
+export const select_tile = (state: ApplicationState, tile_id: number | null): ApplicationState => {
   const current_level = state.game.current_level();
   current_level.currently_selected = tile_id;
   clear_highlights(state);
@@ -16,7 +17,7 @@ export const select_tile = (state, tile_id) => {
   return state;
 }
 
-export const advance_tile_color = (state, tile) => {
+export const advance_tile_color = (state: ApplicationState, tile: TileType): ApplicationState => {
   const current_level = state.game.current_level();
   const tiles = current_level.board.filter(potential_tile => tile.target_tiles.includes(potential_tile.id));
   for (const updated_tile of tiles) {
@@ -39,12 +40,12 @@ export const advance_tile_color = (state, tile) => {
   return state;
 }
 
-export const update_achievement_text = (state, text) => {
+export const update_achievement_text = (state: ApplicationState, text: string): ApplicationState => {
   state.achievement_text = text;
   return state;
 }
 
-export const previous_tile_color = (state, tile) => {
+export const previous_tile_color = (state: ApplicationState, tile: TileType): ApplicationState => {
   const current_level = state.game.current_level();
   const tiles = current_level.board.filter(potential_tile => tile.target_tiles.includes(potential_tile.id));
 
@@ -67,7 +68,7 @@ export const previous_tile_color = (state, tile) => {
   return state;
 }
 
-export const preview_tiles = (state, selected_tile) => {
+export const preview_tiles = (state: ApplicationState, selected_tile: TileType | undefined): ApplicationState => {
   if (selected_tile) {
     const current_level = state.game.current_level();
     for (const tile of current_level.board) {
@@ -80,7 +81,7 @@ export const preview_tiles = (state, selected_tile) => {
   return state;
 }
 
-export const highlight_tiles = (state, clicked_tile) => {
+export const highlight_tiles = (state: ApplicationState, clicked_tile: TileType): ApplicationState => {
   clear_highlights(state);
   const current_level = state.game.current_level();
   for (const tile of current_level.board) {
@@ -94,7 +95,7 @@ export const highlight_tiles = (state, clicked_tile) => {
   return state;
 }
 
-export const clear_highlights = state => {
+export const clear_highlights = (state: ApplicationState): ApplicationState => {
   const level = state.game.current_level();
   for (const tile of level.board) {
     tile.preview = false;
@@ -104,14 +105,14 @@ export const clear_highlights = state => {
   return state;
 }
 
-export const tiles_would_solve_puzzle = (board, target_tiles) => {
+export const tiles_would_solve_puzzle = (board: TileType[], target_tiles: TileType[]) => {
   const target_tiles_ids = target_tiles.map(tile => tile.id);
   const updated_colors = board.map(tile => !target_tiles_ids.includes(tile.id) ? tile.current_color : tile.current_color < 5 ? tile.current_color + 1 : 0);
 
   return updated_colors.every(color => color === updated_colors[0]);
 }
 
-export const shuffle_colors = (state, first_load) => {
+export const shuffle_colors = (state: ApplicationState, first_load: unknown): ApplicationState => {
   clear_highlights(state);
   state.current_display = first_load === null ? 'tutorial' : 'game';
   const current_level = state.game.current_level();
@@ -158,7 +159,7 @@ export const shuffle_colors = (state, first_load) => {
   return state;
 }
 
-export const navigate_level = (state, level) => {
+export const navigate_level = (state: ApplicationState, level: number): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   if (state.game.levels.length - 1 >= level) {
     state.game.current_level_index = level;
@@ -168,7 +169,7 @@ export const navigate_level = (state, level) => {
   return state;
 }
 
-export const undo_move = state => {
+export const undo_move = (state: ApplicationState): ApplicationState => {
   const current_level = state.game.current_level();
   const last_move = current_level.last_move ? current_level.last_move : null;
 
@@ -193,40 +194,40 @@ export const undo_move = state => {
   return state;
 }
 
-export const toggle_achievements = state => {
+export const toggle_achievements = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.current_display = state.current_display === 'achievements' ? 'game' : 'achievements';
   state.last_action = 'nav';
   return state;
 }
 
-export const toggle_tutorial = state => {
+export const toggle_tutorial = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.current_display = state.current_display === 'tutorial' ? 'game' : 'tutorial';
   state.tutorial.current_level_index = 0;
   state.last_action = 'nav';
   return state;
 }
-export const next_tutorial = state => {
+export const next_tutorial = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.tutorial.current_level_index = state.tutorial.current_level_index < state.tutorial.levels.length - 1 ? state.tutorial.current_level_index + 1 : state.tutorial.current_level_index;
   return state;
 }
 
-export const previous_tutorial = state => {
+export const previous_tutorial = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.tutorial.current_level_index = state.tutorial.current_level_index > 0 ? state.tutorial.current_level_index - 1 : state.tutorial.current_level_index;
   return state;
 }
 
-export const toggle_mute_audio = state => {
+export const toggle_mute_audio = (state: ApplicationState): ApplicationState => {
   state.mute_audio = !state.mute_audio;
   if (!state.mute_audio) DownClickSound.play();
   state.last_action = 'settings';
   return state;
 }
 
-export const toggle_mute_music = state => {
+export const toggle_mute_music = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.mute_music = !state.mute_music;
   GameMusic.volume = 0.5; 
@@ -236,21 +237,21 @@ export const toggle_mute_music = state => {
   return state;
 }
 
-export const toggle_hide_numbers = state => {
+export const toggle_hide_numbers = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.hide_numbers = !state.hide_numbers;
   state.last_action = 'settings';
   return state;
 }
 
-export const toggle_hide_colors = state => {
+export const toggle_hide_colors = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.hide_colors = !state.hide_colors;
   state.last_action = 'settings';
   return state;
 }
 
-export const next_level_nav_page = state => {
+export const next_level_nav_page = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.level_nav_page = 
     state.level_nav_page * num_displayed_levels + num_displayed_levels >= state.game.levels.length ? 
@@ -259,32 +260,32 @@ export const next_level_nav_page = state => {
   return state;
 }
 
-export const previous_level_nav_page = state => {
+export const previous_level_nav_page = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.level_nav_page = state.level_nav_page > 0 ? state.level_nav_page -= 1 : 0;
   return state;
 }
 
-export const toggle_level_nav_menu = state => {
+export const toggle_level_nav_menu = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.current_display = state.current_display === 'nav' ? 'game' : 'nav';
   state.last_action = 'nav';
   return state;
 }
 
-export const toggle_hide_tooltips = state => {
+export const toggle_hide_tooltips = (state: ApplicationState): ApplicationState => {
   if (!state.mute_audio) DownClickSound.play();
   state.hide_tooltips = !state.hide_tooltips;
   state.last_action = 'settings';
   return state;
 }
 
-export const null_last_action = state => {
+export const null_last_action = (state: ApplicationState): ApplicationState => {
   state.last_action = null;
   return state;
 }
 
-export const sync_pulse_animations = () => {
+export const sync_pulse_animations = (): void => {
   const anims = document.getAnimations();
   for (const animation of anims) {
     if (animation.animationName === 'pulse') {

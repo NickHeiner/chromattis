@@ -1,8 +1,14 @@
 import '../styles/LevelNavBar.css';
 import { LevelNavButton } from './LevelNavButton';
 import { toggleLevelNavMenu } from '../events';
+import type { Level } from '../types';
 
-export const LevelNavBar = ({levels, current_level_index, highest_unlocked_level, hide_tooltips}) => {
+export const LevelNavBar = ({levels, current_level_index, highest_unlocked_level, hide_tooltips}: {
+  levels: Level[];
+  current_level_index: number;
+  highest_unlocked_level: number;
+  hide_tooltips?: boolean;
+}) => {
 
   const buttons = levels.map((level, index) => {
 

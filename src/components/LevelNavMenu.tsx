@@ -1,10 +1,17 @@
 import '../styles/LevelNavMenu.css';
 import { LevelNavButton } from './LevelNavButton';
 import { nextLevelSelectPageClicked, previousLevelSelectPageClicked, toggleLevelNavMenu } from '../events';
+import type { Level } from '../types';
 
 export const num_displayed_levels = 48;
 
-export const LevelNavMenu = ({levels, current_level_index, highest_unlocked_level, show_level_nav, page}) => {
+export const LevelNavMenu = ({levels, current_level_index, highest_unlocked_level, show_level_nav, page}: {
+  levels: Level[];
+  current_level_index: number;
+  highest_unlocked_level: number;
+  show_level_nav: boolean;
+  page: number;
+}) => {
   const lower_index = page * num_displayed_levels;
   const upper_index = page * num_displayed_levels + num_displayed_levels;
 

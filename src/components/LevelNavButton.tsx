@@ -1,6 +1,14 @@
 import { navigateLevelButtonClicked } from '../events';
+import type { Level } from '../types';
 
-export const LevelNavButton = ({display_in_nav_menu, display_in_nav_bar, index, current_level_class, is_unlocked, hide_tooltips}) => {
+export const LevelNavButton = ({display_in_nav_menu, display_in_nav_bar, index, current_level_class, is_unlocked, hide_tooltips}: {
+  display_in_nav_menu?: boolean;
+  display_in_nav_bar?: boolean;
+  index: number;
+  current_level_class: string | null;
+  is_unlocked: boolean;
+  hide_tooltips?: boolean;
+}) => {
   return(
     <span
         className={`level-navigation-button clickable ${ current_level_class } ${ is_unlocked ? 'unlocked' : 'locked' } ${display_in_nav_bar ? 'in-nav' : 'hide-in-nav'} ${display_in_nav_menu ? 'in-menu' : 'hide-in-menu'}`} 

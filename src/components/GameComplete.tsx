@@ -1,7 +1,8 @@
 import '../styles/GameComplete.css';
 import { navigateLevelButtonClicked } from '../events';
+import type { Game } from '../types';
 
-export const GameComplete = ({game}) => {
+export const GameComplete = ({game}: { game: Game }) => {
   let total_moves = 0;
   for (const level of game.levels) {
     total_moves += level.moves;
